@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Pos Detection</string>
+    <string name="scan_button_name">Start scan</string>
+</resources>
