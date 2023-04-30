@@ -23,7 +23,7 @@ class StartFragment: Fragment() {
             if (isGranted) {
                 startScan()
             } else {
-                // homework: сделать так чтобы при отказе скрыть кнопку и показать сообщение
+            // homework: сделать так чтобы при отказе скрыть кнопку и показать сообщение
             }
         }
 

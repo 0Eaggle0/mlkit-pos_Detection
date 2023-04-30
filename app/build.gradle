@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.eaggle.posdetection"
-        minSdk 26
+        minSdk 30
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -56,4 +56,8 @@ dependencies {
 
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
+
+    //pose detection ml kit
+    implementation 'com.google.mlkit:pose-detection:18.0.0-beta3'
+    implementation 'com.google.mlkit:pose-detection-accurate:18.0.0-beta3'
 }
