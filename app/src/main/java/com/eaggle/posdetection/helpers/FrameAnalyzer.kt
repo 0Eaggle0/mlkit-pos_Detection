@@ -1,11 +1,34 @@
 package com.eaggle.posdetection.helpers
 
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import com.eaggle.posdetection.cameraFeature.LandMarkView
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.PoseDetector
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 
-class FrameAnalyzer: ImageAnalysis.Analyzer {
+@ExperimentalGetImage
+class FrameAnalyzer(
+    private val viewPoint: LandMarkView
+): ImageAnalysis.Analyzer {
+    private val options = PoseDetectorOptions.Builder()
+        .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+        .build()
+    private val detector = PoseDetection.getClient(options)
     override fun analyze(image: ImageProxy) {
-        println("work, work, work, work, work")
+        val mediaImage = image.image
+        if (mediaImage != null){
+            val imageForDetector = InputImage.fromMediaImage(mediaImage, image.imageInfo.rotationDegrees)
+            detector.process(imageForDetector)
+                .addOnSuccessListener { resultPose ->
+                    viewPoint.setParams(resultPose)
+                }
+                .addOnFailureListener {
+                    println("image fail")
+                }
+        }
         image.close()
     }
 }

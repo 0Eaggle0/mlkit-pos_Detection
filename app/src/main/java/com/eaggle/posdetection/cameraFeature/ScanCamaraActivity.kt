@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -13,6 +14,7 @@ import com.eaggle.posdetection.R
 import com.eaggle.posdetection.helpers.FrameAnalyzer
 import com.google.common.util.concurrent.ListenableFuture
 
+@ExperimentalGetImage
 class ScanCamaraActivity: AppCompatActivity() {
     private lateinit var cameraFuture: ListenableFuture<ProcessCameraProvider>
 
@@ -38,7 +40,8 @@ class ScanCamaraActivity: AppCompatActivity() {
         val imageAnalysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
-        imageAnalysis.setAnalyzer(mainExecutor, FrameAnalyzer())
+        val viewPoint = findViewById<LandMarkView>(R.id.landMarkView)
+        imageAnalysis.setAnalyzer(mainExecutor, FrameAnalyzer(viewPoint))
 
         cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
     }
