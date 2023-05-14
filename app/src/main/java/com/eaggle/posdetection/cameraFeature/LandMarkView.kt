@@ -5,10 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.Size
 import android.view.View
 import androidx.core.graphics.green
+import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 
@@ -19,6 +21,7 @@ class LandMarkView(
     private var viewSize = Size(0, 0)
     private val mainPaint = Paint(ANTI_ALIAS_FLAG)
     private var poseDetected: Pose? = null
+    private var sizeSource = Size(0, 0)
     init {
         mainPaint.color = Color.GREEN
         mainPaint.strokeWidth = 4.0F
@@ -32,16 +35,129 @@ class LandMarkView(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        val landMark = poseDetected?.getPoseLandmark(PoseLandmark.NOSE)
-        canvas?.drawCircle(
-            viewSize.width / 2F, viewSize.height / 2F,
-            30F,
-            mainPaint
-        )
+        var landMark = poseDetected?.getPoseLandmark(PoseLandmark.NOSE)
+        if (landMark != null) {
+            drawLandmark(landMark, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_EYE_INNER)
+        if (landMark != null) {
+            drawLandmark(landMark, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_EYE_OUTER)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_EYE)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_EYE_INNER)
+        if (landMark != null) {
+            drawLandmark(landMark, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_EYE_OUTER)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_EYE)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_MOUTH)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_MOUTH)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_EAR)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_EAR)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_SHOULDER)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_KNEE)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_KNEE)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_INDEX)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_INDEX)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_ANKLE)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_ANKLE)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_HEEL)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_HEEL)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_FOOT_INDEX)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_FOOT_INDEX)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.LEFT_ELBOW)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
+        landMark = poseDetected?.getPoseLandmark(PoseLandmark.RIGHT_ELBOW)
+        landMark?.let { //this is if
+            drawLandmark(it, canvas)
+        }
     }
-    fun setParams(pose: Pose){
+    fun setParams(pose: Pose, sourceSize: Size){
         poseDetected = pose
+        sizeSource = sourceSize
         invalidate()
     }
 
+    private fun drawLandmark(landMark: PoseLandmark, drawCanvas: Canvas?){
+        val position = convertPoint(landMark.position3D)
+        drawCanvas?.drawCircle(position.x, position.y, 20f, mainPaint)
+    }
+
+    private fun convertPoint(targetPos: PointF3D, ):PointF{
+        val x1 = targetPos.x
+        val y1 = targetPos.y
+        val w1 = sizeSource.width
+        val h1 = sizeSource.height
+        val w2 = viewSize.width
+        val h2 = viewSize.height
+
+        val x2 = x1 * w2 / w1
+        val y2 = y1 * h2 / h1
+
+        return PointF(x2, y2)
+    }
 }

@@ -1,5 +1,6 @@
 package com.eaggle.posdetection.helpers
 
+import android.util.Size
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -8,6 +9,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import java.lang.Integer.max
+import kotlin.math.min
 
 @ExperimentalGetImage
 class FrameAnalyzer(
@@ -23,12 +26,17 @@ class FrameAnalyzer(
             val imageForDetector = InputImage.fromMediaImage(mediaImage, image.imageInfo.rotationDegrees)
             detector.process(imageForDetector)
                 .addOnSuccessListener { resultPose ->
-                    viewPoint.setParams(resultPose)
+                    val size = Size(
+                        min(image.width, image.height),
+                        max(image.width, image.height)
+                    )
+                    viewPoint.setParams(resultPose, size)
+                    image.close()
                 }
                 .addOnFailureListener {
                     println("image fail")
+                    image.close()
                 }
         }
-        image.close()
     }
 }
